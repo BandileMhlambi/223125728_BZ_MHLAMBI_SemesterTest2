@@ -1,50 +1,89 @@
-# Welcome to your Expo app 👋
+ShopEZ - Simple Shopping App (Expo + Firebase)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Applications needed
+- Node.js
+- Git Bash
+- Expo Go app on your phone
+- A Firebase project (console) with Email/Password Auth and Realtime Database enabled
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Install & Run
+-------------
+1) Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2) Add Firebase config
 
-## Learn more
+Open `firebase/firebase.ts` and replace the placeholder values:
 
-To learn more about developing your project with Expo, look at the following resources:
+```ts
+const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'YOUR_AUTH_DOMAIN',
+  databaseURL: 'YOUR_DATABASE_URL',
+  projectId: 'YOUR_PROJECT_ID',
+  storageBucket: 'YOUR_STORAGE_BUCKET',
+  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+  appId: 'YOUR_APP_ID',
+};
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+How to find these: In Firebase Console → Project Settings → General → Your apps.
 
-## Join the community
+3) Start the app
 
-Join our community of developers creating universal apps.
+```bash
+npm run start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Scan the QR code with Expo Go.
+
+What’s Included
+---------------
+- Email/password Register and Login screens with validation
+- Persistent login using Firebase Auth + AsyncStorage
+- Product list from Fake Store API with category filter
+- Product detail screen with Add to Cart
+- Cart saved per user in Firebase Realtime Database (read/update/delete)
+- React Navigation (Expo Router) for screen navigation
+
+Firebase Setup (Step-by-step)
+-----------------------------
+1) In Firebase Console → Build → Authentication → Sign-in method → enable Email/Password.
+2) In Firebase Console → Build → Realtime Database → Create database → Start in locked mode.
+3) Get the Database URL (looks like `https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com`) and paste it into `databaseURL`.
+
+Realtime Database Structure
+---------------------------
+- `carts/{userId}/{productId}` → `{ title, image, price, quantity }`
+
+Security Rules (copy/paste)
+---------------------------
+In Firebase Console → Realtime Database → Rules:
+
+```json
+{
+  "rules": {
+    "carts": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}
+```
+
+Basic Usage:
+1) Create an account on the Register screen
+2) Login
+3) Browse products, filter by category, tap a product to see details
+4) Add to Cart
+5) Open Cart tab to change quantity or remove
+
+Troubleshooting:
+- If Auth errors like "email already in use" or "invalid password" appear, just read the message and adjust.
+- Ensure your `firebase/firebase.ts` values are correct.
+- If products don’t load, check your internet connection.
